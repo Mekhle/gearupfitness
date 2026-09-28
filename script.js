@@ -468,7 +468,62 @@ if (revFilters && revCards.length > 0) {
   };
 }
 
+/* ==========================================================================
+   5. Anti-Scraper, Anti-Cloning & Domain Security Protection
+   ========================================================================== */
+(function() {
+  // 1. Domain Lock: Prevent re-hosting on unauthorized domains if scraped by Cyotek/HTTrack
+  var allowedHosts = [
+    "mekhle.github.io",
+    "localhost",
+    "127.0.0.1",
+    "gearup-fitness.test",
+    ""
+  ];
+  var currentHost = window.location.hostname.toLowerCase();
+  var isLocal = window.location.protocol === "file:" || currentHost.endsWith(".test") || currentHost.endsWith(".local");
+  var isAllowed = isLocal || allowedHosts.some(function(h) { return h && (currentHost === h || currentHost.endsWith("." + h)); });
 
+  if (!isAllowed) {
+    document.documentElement.innerHTML = "<div style='display:flex;height:100vh;align-items:center;justify-content:center;background:#0a1233;color:#fff;font-family:sans-serif;text-align:center;padding:20px'><div><h1 style='color:#ff5e14;font-size:2rem;margin-bottom:12px'>Gear Up Fitness Centre</h1><p style='color:#94a3b8;font-size:1.1rem;max-width:500px'>Unauthorized copy detected. Visit the official website at <a href='https://mekhle.github.io/gearupfitness/' style='color:#00d2ff;text-decoration:none;font-weight:bold'>mekhle.github.io/gearupfitness</a></p></div></div>";
+    return;
+  }
 
+  // 2. Anti-Iframe Clickjacking Protection
+  if (window.top !== window.self) {
+    try {
+      window.top.location = window.self.location;
+    } catch (e) {}
+  }
 
+  // 3. Disable Right-Click Context Menu
+  document.addEventListener("contextmenu", function(e) {
+    e.preventDefault();
+    return false;
+  }, false);
 
+  // 4. Disable Element / Image Drag & Drop
+  document.addEventListener("dragstart", function(e) {
+    e.preventDefault();
+    return false;
+  }, false);
+
+  // 5. Block Developer Tools & Save Keyboard Shortcuts
+  document.addEventListener("keydown", function(e) {
+    // F12 key
+    if (e.keyCode === 123) {
+      e.preventDefault();
+      return false;
+    }
+    // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C (DevTools)
+    if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+      e.preventDefault();
+      return false;
+    }
+    // Ctrl+U (View Source) or Ctrl+S (Save Page)
+    if ((e.ctrlKey || e.metaKey) && (e.keyCode === 85 || e.keyCode === 83)) {
+      e.preventDefault();
+      return false;
+    }
+  }, false);
+})();

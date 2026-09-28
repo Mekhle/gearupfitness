@@ -1,0 +1,30 @@
+# Gear Up Fitness Centre - Robots & Anti-Scraper Policy
+
+# Block automated offline website copiers & rippers
+User-agent: HTTrack
+Disallow: /
+
+User-agent: CyotekWebCopy
+Disallow: /
+
+User-agent: WebCopy
+Disallow: /
+
+User-agent: Teleport
+Disallow: /
+
+User-agent: TeleportPro
+Disallow: /
+
+User-agent: Offline Explorer
+Disallow: /
+
+User-agent: wget
+Disallow: /
+
+User-agent: curl
+Disallow: /
+
+# Allow standard search engines
+User-agent: *
+Allow: /
